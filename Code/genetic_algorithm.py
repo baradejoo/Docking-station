@@ -2,8 +2,13 @@ import visualisation as vs
 import drones
 import numpy as np
 from typing import List, Tuple
-from random import seed
 from random import randint
+
+
+class Exception1(Exception):
+    def __init__(self, message="Something goes wrong! -> Two different sizes"):
+        self.message = message
+        super().__init__(self.message)
 
 
 def genetic_alg(drones_params, build_cost, pop_size, alg_iteration, graph_size):
@@ -17,6 +22,7 @@ def genetic_alg(drones_params, build_cost, pop_size, alg_iteration, graph_size):
         drones_list.append(drones.Drone(idx, params))
 
     pop = init_pop(pop_size, graph_size)
+    print(pop[5])
     # pop, best_sol, best_val, av_sol = fitness(drones_params, build_cost, pop)
     # pop = selection(drones_params, build_cost, pop)
 
@@ -39,12 +45,11 @@ def genetic_alg(drones_params, build_cost, pop_size, alg_iteration, graph_size):
 
 
 def generate_stations_localisation(pop_size, graph_size) -> List[Tuple]:
-    seed(1)
     stations_coordinates = []
     for i in range(0, pop_size):
         x = randint(0, graph_size)
         y = randint(0, graph_size)
-        coordinates = x, y
+        coordinates = [x, y]
         stations_coordinates.append(coordinates)
 
     return stations_coordinates
@@ -55,9 +60,13 @@ def init_pop(pop_size, graph_size) -> List[drones.Individual]:
 
     population = []
     stations_coordinates = generate_stations_localisation(pop_size, graph_size)
-    for i in range(0, pop_size):
-        new_individual = random_chromosome(data)
-        population.append(Individual(new_ch[0], new_ch[1]))
+
+    if len(stations_coordinates) == pop_size:
+        for i in range(0, pop_size):
+            population.append(drones.Individual(i, stations_coordinates[i]))
+    else:
+        raise Exception1
+
     return population
 
 
