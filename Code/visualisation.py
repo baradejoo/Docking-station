@@ -18,6 +18,7 @@ def visualisation(stations_center_coordinates: List[Tuple], drones_coordinates: 
     fig, ax = plt.subplots()
     ax = plt.gca()
     ax.cla()
+    fig.set_size_inches(15, 15)
     ax.plot(graph_size, graph_size)
     for idx, val in enumerate(stations_radius):
         circle = plt.Circle((stations_center_x[idx], stations_center_y[idx]), val, color='b', fill=False)
