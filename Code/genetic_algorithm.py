@@ -1,31 +1,41 @@
 import visualisation as vs
+import drones
+import numpy as np
+from typing import List, Tuple
 
 
 def genetic_alg(drones_params, build_cost, pop_size, alg_iteration):
     """Implementation of genetic algorithm
     :return: best solution"""
 
+    drones_list = []  # Containing list of drones objects
+
+    # Creating drones objects
+    for idx, params in enumerate(drones_params):
+        drones_list.append(drones.Drone(idx, params))
+    print(drones_list[0])
+
     pop = init_pop(pop_size)
-    pop, best_sol, best_val, av_sol = fitness(drones_params, build_cost, pop)
-    pop = selection(drones_params, build_cost, pop)
+    # pop, best_sol, best_val, av_sol = fitness(drones_params, build_cost, pop)
+    # pop = selection(drones_params, build_cost, pop)
 
-    i = 1
-    while i <= alg_iteration:
-        pop = cross_pop()
-        pop = mutation()
-        pop, it_best_sol, it_best_val, av_sol = fitness()
+    # i = 1
+    # while i <= alg_iteration:
+    #     pop = cross_pop()
+    #     pop = mutation()
+    #     pop, it_best_sol, it_best_val, av_sol = fitness()
+    #
+    #     if it_best_sol.obj_fcn < best_sol.obj_fcn:
+    #         best_sol = deepcopy(it_best_sol)
+    #
+    #     pop = selection(data, pop)
 
-        if it_best_sol.obj_fcn < best_sol.obj_fcn:
-            best_sol = deepcopy(it_best_sol)
+        # i += 1
 
-        pop = selection(data, pop)
-
-        i += 1
-
-    return best_sol, best_sol_vec, av_sol_vec
+    return 1
 
 
-def init_pop(pop_size) -> List[Individual]:
+def init_pop(pop_size):
     pass
     # TODO: losowanie wspolrzednych stacji
     # jeden osobnik to jedna stacja !!!

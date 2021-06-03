@@ -13,9 +13,11 @@ class Drone:
         self.id = id_
         self.x_0 = drone_param_[0]
         self.y_0 = drone_param_[1]
+        self.maintenance_cost = drone_param_[2]
 
     def __str__(self) -> str:
-        return f"Drone no. {self.id}, coordinates: [{self.x_0},{self.y_0}]".format(self=self)
+        return f"Drone no. {self.id} -> coordinates: [{self.x_0},{self.y_0}], maintenance cost: " \
+               f"{self.maintenance_cost}".format(self=self)
 
 
 class Individual:
@@ -34,5 +36,5 @@ class Individual:
         self.prob = prob_
 
     def __str__(self) -> str:
-        return f"Individual no. {self.id}, chromosome: {self.chromosome}, probability: {self.prob}, " \
+        return f"Individual no. {self.id} -> chromosome: {self.chromosome}, probability: {self.prob}, " \
                f"cost function: {self.obj_fcn}".format(self=self)
