@@ -41,7 +41,8 @@ def genetic_alg(drones_params, build_cost, pop_size, alg_iteration, graph_size):
         drones_list.append(helper.Drone(idx, params))
 
     pop = init_pop(pop_size, graph_size)
-    crossover(pop[1], pop[2], graph_size)
+    #crossover(pop[1], pop[2], graph_size)
+    #mutation(pop, 0.5, pop_size, graph_size)
     # pop, best_sol, best_val, av_sol = fitness(drones_params, build_cost, pop)
     # pop = selection(drones_params, build_cost, pop)
 
@@ -103,11 +104,46 @@ def cross_pop():
     # TODO: binarnie!!! polowa z pierwszego krzyzyuje sie z polowa z drugiego
 
 
-def mutation():
+def mutation(pop: List[Individual], mutation_factor: float, pop_size, graph_size) -> List[Individual]:
     """Mutates random gens with probability
         :return: population with small percentage of mutated individuals"""
-    # TODO: binarni!! zamiana losowych bitow w jednym osobniku
 
+    random_stations = []
+    duplications = []
+    mutated_amount = len(pop) * mutation_factor
+    while len(random_stations) < mutated_amount:
+        for i in range(int(mutated_amount)):
+            x = randint(0, len(pop)-1)
+            if x not in duplications:
+                random_stations.append(x)
+                duplications.append(x)
+            if len(random_stations) == mutated_amount:
+                break
+    #print(random_stations)
+    for e in random_stations:
+        array_string = []
+        #print(pop[e])
+        string = helper.convert_chromosome_to_bin(pop[e], len(bin(graph_size)[2:]))
+        #print("stary:", string, "\n")
+        x = randint(0, len(string)-1)
+        for i in string:
+            array_string.append(int(i))
+        if array_string[x] == 1:
+            array_string[x] = 0
+        else:
+            array_string[x] = 1
+        gen_x = array_string[:8]
+        gen_y = array_string[8:]
+        string_x = [str(int) for int in gen_x]
+        string_x = "".join(string_x)
+        string_y = [str(int) for int in gen_y]
+        string_y = "".join(string_y)
+        #print("nowy:", array_string, "\n")
+        #print("genx:", gen_x, "\n", "geny:", gen_y,"\n")
+        #print("string_x:", string_x)
+        #print("string_y:", string_y)
+        pop[e].chromosome = [int(string_x, 2), int(string_y, 2)]
+        #print("chromosom:", pop[e].chromosome)
 
 def crossover(ind1: Individual, ind2: Individual, graph_size) -> Tuple[Individual, Individual]:
     """ Crossing one part of individual with the other part of individual """
