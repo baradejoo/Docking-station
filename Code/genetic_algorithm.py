@@ -91,17 +91,28 @@ def fitness(build_cost, pop):
     # TODO: prawdopobienstwo = funkcja celu jednego osobnika/  sume wszystkich
 
 
-def selection(drones_params, build_cost, pop):
-    pass
-    # TODO: selekcja, kolo ruletki na podstawie wyliczonych prawdopobienstw z fitness
+def selection(drones_params, build_cost, pop: List[Individual]):
+    """Select individuals based on probability calculated by fitness
+        :return: population to reproduce"""
 
+    new_pop = []
+    while len(new_pop) < len(pop):
+        r = random.random()
+        prob = 0
+        for i in pop:
+            prob += i.prob
+            if prob > r:
+                new_pop.append(i)
+                break
+    return new_pop
 
 def cross_pop():
     pass
     # TODO: binarnie!!! polowa z pierwszego krzyzyuje sie z polowa z drugiego
 
 def mutation():
-    pass
+    """Mutates random gens with probability
+        :return: population with small percentage of mutated individuals"""
     # TODO: binarni!! zamiana losowych bitow w jednym osobniku
 
 
