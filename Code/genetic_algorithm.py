@@ -3,6 +3,7 @@ import helper_functions as helper
 import numpy as np
 from typing import List, Tuple
 from random import randint, random
+import random
 import math
 
 
@@ -41,8 +42,9 @@ def genetic_alg(drones_params, build_cost, pop_size, alg_iteration, graph_size):
         drones_list.append(helper.Drone(idx, params))
 
     pop = init_pop(pop_size, graph_size)
+
     #crossover(pop[1], pop[2], graph_size)
-    #mutation(pop, 0.5, pop_size, graph_size)
+    # new_pop = cross_pop(pop, graph_size, 0.5)
     # pop, best_sol, best_val, av_sol = fitness(drones_params, build_cost, pop)
     # pop = selection(drones_params, build_cost, pop)
 
@@ -99,10 +101,26 @@ def selection(drones_params, build_cost, pop: List[Individual]):
     return new_pop
 
 
-def cross_pop():
-    pass
-    # TODO: binarnie!!! polowa z pierwszego krzyzyuje sie z polowa z drugiego
+def cross_pop(pop: List[Individual], graph_size, cross_factor) -> List[Individual]:
+    """Crossing children with old population
+        :return: new population"""
 
+    crossed_pop = []
+    i = 0
+    while i < len(pop) * cross_factor :
+        children = crossover(pop[i], pop[i+1], graph_size)
+        crossed_pop.append(children[0])
+        crossed_pop.append(children[1])
+        i += 2
+    while len(crossed_pop) < len(pop):
+        r = random.random()
+        prob = 0
+        for e in pop:
+            prob += e.prob
+            if prob < r:
+                crossed_pop.append(e)
+                break
+    return crossed_pop
 
 def mutation(pop: List[Individual], mutation_factor: float, pop_size, graph_size) -> List[Individual]:
     """Mutates random gens with probability
@@ -119,12 +137,12 @@ def mutation(pop: List[Individual], mutation_factor: float, pop_size, graph_size
                 duplications.append(x)
             if len(random_stations) == mutated_amount:
                 break
-    #print(random_stations)
+    # print(random_stations)
     for e in random_stations:
         array_string = []
-        #print(pop[e])
+        # print(pop[e])
         string = helper.convert_chromosome_to_bin(pop[e], len(bin(graph_size)[2:]))
-        #print("stary:", string, "\n")
+        # print("stary:", string, "\n")
         x = randint(0, len(string)-1)
         for i in string:
             array_string.append(int(i))
@@ -138,12 +156,12 @@ def mutation(pop: List[Individual], mutation_factor: float, pop_size, graph_size
         string_x = "".join(string_x)
         string_y = [str(int) for int in gen_y]
         string_y = "".join(string_y)
-        #print("nowy:", array_string, "\n")
-        #print("genx:", gen_x, "\n", "geny:", gen_y,"\n")
-        #print("string_x:", string_x)
-        #print("string_y:", string_y)
+        # print("nowy:", array_string, "\n")
+        # print("genx:", gen_x, "\n", "geny:", gen_y,"\n")
+        # print("string_x:", string_x)
+        # print("string_y:", string_y)
         pop[e].chromosome = [int(string_x, 2), int(string_y, 2)]
-        #print("chromosom:", pop[e].chromosome)
+        # print("chromosom:", pop[e].chromosome)
 
 def crossover(ind1: Individual, ind2: Individual, graph_size) -> Tuple[Individual, Individual]:
     """ Crossing one part of individual with the other part of individual """
