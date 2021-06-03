@@ -21,18 +21,16 @@ class Drone:
 class Individual:
     """Class containing individual chromosome and rating"""
 
-    def __init__(self, id_: int, station_coordinates_: List, prob_: float = 0):
+    def __init__(self, station_coordinates_: List, prob_: float = 0):
         """
-        :param id: id of each individual
         :param chromosome: described one individual (station) as 2 coordinates in binary: x and y
         :param obj_fcn: cost function which it's minimise
         :param prob_: probability of choosing this individual
         """
-        self.id = id_
         self.chromosome = station_coordinates_
         self.obj_fcn = 0
         self.prob = prob_
 
     def __str__(self) -> str:
-        return f"Individual no. {self.id} -> chromosome: {self.chromosome}, probability: {self.prob}, " \
+        return f"Individual -> chromosome: {self.chromosome}, probability: {self.prob}, " \
                f"cost function: {self.obj_fcn}".format(self=self)
