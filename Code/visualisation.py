@@ -2,12 +2,6 @@ from typing import List, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
 
-stations_center_xy = [(100, 100), (56, 201), (56, 36), (134, 12)]
-drones_xy = [(33, 33), (20, 20)]
-stations_radius = [100, 50, 30, 20]
-
-graph_size = 256
-
 
 def visualisation(stations_center_coordinates: List[Tuple], drones_coordinates: List[Tuple], stations_radius: List):
     stations_center_x = [i[0] for i in stations_center_coordinates]
@@ -26,6 +20,3 @@ def visualisation(stations_center_coordinates: List[Tuple], drones_coordinates: 
 
     ax.plot(stations_center_x, stations_center_y, 'bx', drones_x, drones_y, 'ko')
     fig.show()
-
-
-visualisation(stations_center_xy, drones_xy, stations_radius)
