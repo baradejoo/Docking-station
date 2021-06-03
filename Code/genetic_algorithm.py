@@ -43,7 +43,7 @@ def genetic_alg(drones_params, build_cost, pop_size, alg_iteration, graph_size):
 
     pop = init_pop(pop_size, graph_size)
 
-    #crossover(pop[1], pop[2], graph_size)
+    crossover(pop[1], pop[2], graph_size)
     # new_pop = cross_pop(pop, graph_size, 0.5)
     # pop, best_sol, best_val, av_sol = fitness(drones_params, build_cost, pop)
     # pop = selection(drones_params, build_cost, pop)
@@ -122,6 +122,7 @@ def cross_pop(pop: List[Individual], graph_size, cross_factor) -> List[Individua
                 break
     return crossed_pop
 
+
 def mutation(pop: List[Individual], mutation_factor: float, pop_size, graph_size) -> List[Individual]:
     """Mutates random gens with probability
         :return: population with small percentage of mutated individuals"""
@@ -163,14 +164,8 @@ def mutation(pop: List[Individual], mutation_factor: float, pop_size, graph_size
         pop[e].chromosome = [int(string_x, 2), int(string_y, 2)]
         # print("chromosom:", pop[e].chromosome)
 
-def crossover(ind1: Individual, ind2: Individual, graph_size) -> Tuple[Individual, Individual]:
-    """ Crossing one part of individual with the other part of individual """
-    """
-       :param ind1: one of the parents who will be crossing with the other parent
-       :param ind2: second one of the parents
-       :return: children (new individual who is the part of the new population)
-    """
 
+def method1_crossover(ind1: Individual, ind2: Individual, graph_size) -> Tuple[Individual, Individual]:
     max_number_gens = graph_size.bit_length()
     # print("Values: x and y before crossover fun.: {}, {} -> 1 parent".format(ind1.chromosome[0], ind1.chromosome[1]))
     # print("Values: x and y before crossover fun.: {}, {} -> 2 parent".format(ind2.chromosome[0], ind2.chromosome[1]))
@@ -192,3 +187,53 @@ def crossover(ind1: Individual, ind2: Individual, graph_size) -> Tuple[Individua
     #                                                                        children[1].chromosome[1]))
 
     return children
+
+
+def method2_crossover(ind1: Individual, ind2: Individual, graph_size) -> Tuple[Individual, Individual]:
+    """ Crossover function, which used BCD code to describe coordinates. It allows crossing gens in specific way,
+        such as: crossing gens which described only number of units (not number od decimals or hundredths) """
+
+    print("Values: x and y before crossover fun.: {}, {} -> 1 parent".format(ind1.chromosome[0], ind1.chromosome[1]))
+    print("Values: x and y before crossover fun.: {}, {} -> 2 parent".format(ind2.chromosome[0], ind2.chromosome[1]))
+
+    ind1_BCD = helper.convert_chromosome_to_BCD(ind1, graph_size)
+    ind2_BCD = helper.convert_chromosome_to_BCD(ind2, graph_size)
+
+    print(ind1_BCD)
+    print(ind2_BCD)
+    ind1_units_BCD = (ind1_BCD[0][-4:], ind1_BCD[1][-4:])
+    ind2_units_BCD = (ind2_BCD[0][-4:], ind2_BCD[1][-4:])
+
+    child1_chromosome_bits = [ind1_BCD[0][:-4] + ind1_units_BCD[0][:2] + ind2_units_BCD[1][-2:],
+                              ind1_BCD[1][:-4] + ind1_units_BCD[0][-2:] + ind2_units_BCD[1][:2]]
+    child2_chromosome_bits = [ind2_BCD[0][:-4] + ind1_units_BCD[1][:2] + ind2_units_BCD[0][-2:],
+                              ind2_BCD[1][:-4] + ind1_units_BCD[1][-2:] + ind2_units_BCD[0][:2]]
+
+    ind1_decimal = helper.convert_BCD_to_decimal_chromosome(child1_chromosome_bits, graph_size)
+    ind2_decimal = helper.convert_BCD_to_decimal_chromosome(child2_chromosome_bits, graph_size)
+
+    children = (Individual(ind1_decimal), Individual(ind2_decimal))
+
+    print("Values: x and y after crossover fun.: {}, {} -> 1 child".format(children[0].chromosome[0],
+                                                                           children[0].chromosome[1]))
+    print("Values: x and y after crossover fun.: {}, {} -> 2 child".format(children[1].chromosome[0],
+                                                                           children[1].chromosome[1]))
+
+    return children
+
+
+def crossover(ind1: Individual, ind2: Individual, graph_size) -> Tuple[Individual, Individual]:
+    """ Crossing one part of individual with the other part of individual """
+    """
+       :param ind1: one of the parents who will be crossing with the other parent
+       :param ind2: second one of the parents
+       :return: children (new individual who is the part of the new population)
+    """
+    method = 2
+    if method == 2:
+        children = method2_crossover(ind1, ind2, graph_size)
+    else:
+        children = method1_crossover(ind1, ind2, graph_size)
+
+    return children
+

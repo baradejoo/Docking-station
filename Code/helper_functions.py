@@ -61,3 +61,58 @@ def convert_chromosome_to_bin(ind, max_number_gens: int) -> str:
         raise ga.Exception1
 
     return gen
+
+
+def convert_chromosome_to_BCD(ind, graph_size) -> List[str]:
+    """
+    :return: list with 2 strings, each of them described parts of chromosome (coordinates: x, y) in BCD code
+    """
+    number_BCD_parts = sum(c.isdigit() for c in str(graph_size))
+    split_numbers_part1_gen = [int(i) for i in str(ind.chromosome[0])]
+    split_numbers_part2_gen = [int(i) for i in str(ind.chromosome[1])]
+
+    part1_gen = ""
+    if len(split_numbers_part1_gen) < number_BCD_parts:
+        added_BCD_parts = number_BCD_parts - len(split_numbers_part1_gen)
+        for i in range(added_BCD_parts):
+            part1_gen += "0000"
+
+    for i in split_numbers_part1_gen:
+        part1_gen += format(i, f'0{4}b')
+
+    part2_gen = ""
+    if len(split_numbers_part2_gen) < number_BCD_parts:
+        added_BCD_parts = number_BCD_parts - len(split_numbers_part2_gen)
+        for i in range(added_BCD_parts):
+            part2_gen += "0000"
+
+    for i in split_numbers_part2_gen:
+        part2_gen += format(i, f'0{4}b')
+
+    return [part1_gen, part2_gen]
+
+
+def convert_BCD_to_decimal_chromosome(ind, graph_size) -> List[int]:
+    """
+    :return: list with 2 ints, each of them described parts of chromosome (coordinates: x, y) in decimal
+    """
+    print(ind)
+    number_BCD_parts = sum(c.isdigit() for c in str(graph_size))
+    decimal_list = []
+    for i in ind:
+        number = ""
+        for j in range(number_BCD_parts):
+            start = j * 4
+            end = (j + 1) * 4
+            divider = i[start:end]
+            if divider != "0000":
+                divider_int = int(divider, 2)
+                if divider_int < 10:
+                    number += str(divider_int)
+                else:
+                    number += str(randint(0, 9))
+        decimal_list.append(int(number))
+
+    print(decimal_list)
+
+    return decimal_list
