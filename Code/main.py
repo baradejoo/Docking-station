@@ -6,7 +6,7 @@ from random import seed
 
 if __name__ == '__main__':
     seed()
-    graph_size = 256
+    graph_size = 255
     pop_size = 10
     drones_amount = 40
     alg_iteration = 30

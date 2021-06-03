@@ -3,6 +3,7 @@ import drones
 import numpy as np
 from typing import List, Tuple
 from random import randint
+import math
 
 
 class Exception1(Exception):
@@ -22,7 +23,7 @@ def genetic_alg(drones_params, build_cost, pop_size, alg_iteration, graph_size):
         drones_list.append(drones.Drone(idx, params))
 
     pop = init_pop(pop_size, graph_size)
-    print(pop[5])
+    crossover(pop[1], pop[2], graph_size)
     # pop, best_sol, best_val, av_sol = fitness(drones_params, build_cost, pop)
     # pop = selection(drones_params, build_cost, pop)
 
@@ -37,9 +38,10 @@ def genetic_alg(drones_params, build_cost, pop_size, alg_iteration, graph_size):
     #
     #     pop = selection(data, pop)
 
-        # i += 1
+    # i += 1
 
     return 1
+
 
 # TODO: do przerzucenia do pliku z funkjami pomocniczymi
 def generate_drones_params(graph_size, drones_amount, max_cost) -> List[Tuple]:
@@ -53,7 +55,7 @@ def generate_drones_params(graph_size, drones_amount, max_cost) -> List[Tuple]:
     return drones_params
 
 
-def generate_stations_localisation(pop_size, graph_size) -> List[Tuple]:
+def generate_stations_localisation(pop_size, graph_size) -> List[Tuple[int]]:
     stations_coordinates = []
     for i in range(0, pop_size):
         x = randint(0, graph_size)
@@ -63,12 +65,14 @@ def generate_stations_localisation(pop_size, graph_size) -> List[Tuple]:
 
     return stations_coordinates
 
+
 def generate_build_cost(graph_size, min_cost, max_cost):
     build_cost = [[0 for x in range(graph_size)] for y in range(graph_size)]
     for i in range(0, graph_size):
         for j in range(0, graph_size):
             build_cost[i][j] = randint(min_cost, max_cost)
     return build_cost
+
 
 def init_pop(pop_size, graph_size) -> List[drones.Individual]:
     """ Function witch initializes population and returns it as a list of Individuals """
@@ -78,7 +82,7 @@ def init_pop(pop_size, graph_size) -> List[drones.Individual]:
 
     if len(stations_coordinates) == pop_size:
         for i in range(0, pop_size):
-            population.append(drones.Individual(i, stations_coordinates[i]))
+            population.append(drones.Individual(i, stations_coordinates[i], 0))
     else:
         raise Exception1
 
@@ -100,8 +104,35 @@ def cross_pop():
     pass
     # TODO: binarnie!!! polowa z pierwszego krzyzyuje sie z polowa z drugiego
 
+
 def mutation():
     pass
     # TODO: binarni!! zamiana losowych bitow w jednym osobniku
 
 
+def convert_chromosome_to_bin(ind: drones.Individual, graph_size) -> str:
+    max_bits = graph_size.bit_length()
+    part1_gen = format(ind.chromosome[0], f'0{max_bits}b')
+    part2_gen = format(ind.chromosome[1], f'0{max_bits}b')
+    gen = part1_gen + part2_gen
+
+    if len(gen) != (2*max_bits):
+        raise Exception1
+
+    return gen
+
+
+def crossover(ind1: drones.Individual, ind2: drones.Individual, graph_size) -> Tuple[drones.Individual, drones.Individual]:
+    """ Crossing one part of individual with the other part of individual """
+    """
+       :param ind1: one of the parents who will be crossing with the other parent
+       :param ind2: second one of the parents
+       :return: children (new individual who is the part of the new population)
+    """
+    ind1_chromosome_bits = convert_chromosome_to_bin(ind1, graph_size)
+    ind2_chromosome_bits = convert_chromosome_to_bin(ind2, graph_size)
+
+    print(len(ind1_chromosome_bits))
+
+
+    return 1
