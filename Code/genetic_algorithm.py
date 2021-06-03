@@ -2,7 +2,7 @@ import visualisation as vs
 import helper_functions as helper
 import numpy as np
 from typing import List, Tuple
-from random import randint
+from random import randint, random
 import math
 
 
