@@ -26,7 +26,7 @@ class Individual:
     def __init__(self, id_: int, station_coordinates_: List, prob_: float = 0):
         """
         :param id: id of each individual
-        :param chromosome: described one individual (station) as 2 coordinates: x and y
+        :param chromosome: described one individual (station) as 2 coordinates in binary: x and y
         :param obj_fcn: cost function which it's minimise
         :param prob_: probability of choosing this individual
         """

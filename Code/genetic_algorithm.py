@@ -2,9 +2,11 @@ import visualisation as vs
 import drones
 import numpy as np
 from typing import List, Tuple
+from random import seed
+from random import randint
 
 
-def genetic_alg(drones_params, build_cost, pop_size, alg_iteration):
+def genetic_alg(drones_params, build_cost, pop_size, alg_iteration, graph_size):
     """Implementation of genetic algorithm
     :return: best solution"""
 
@@ -13,9 +15,8 @@ def genetic_alg(drones_params, build_cost, pop_size, alg_iteration):
     # Creating drones objects
     for idx, params in enumerate(drones_params):
         drones_list.append(drones.Drone(idx, params))
-    print(drones_list[0])
 
-    pop = init_pop(pop_size)
+    pop = init_pop(pop_size, graph_size)
     # pop, best_sol, best_val, av_sol = fitness(drones_params, build_cost, pop)
     # pop = selection(drones_params, build_cost, pop)
 
@@ -34,11 +35,30 @@ def genetic_alg(drones_params, build_cost, pop_size, alg_iteration):
 
     return 1
 
+# TODO: do przerzucenia do pliku z funkjami pomocniczymi
 
-def init_pop(pop_size):
-    pass
-    # TODO: losowanie wspolrzednych stacji
-    # jeden osobnik to jedna stacja !!!
+
+def generate_stations_localisation(pop_size, graph_size) -> List[Tuple]:
+    seed(1)
+    stations_coordinates = []
+    for i in range(0, pop_size):
+        x = randint(0, graph_size)
+        y = randint(0, graph_size)
+        coordinates = x, y
+        stations_coordinates.append(coordinates)
+
+    return stations_coordinates
+
+
+def init_pop(pop_size, graph_size) -> List[drones.Individual]:
+    """ Function witch initializes population and returns it as a list of Individuals """
+
+    population = []
+    stations_coordinates = generate_stations_localisation(pop_size, graph_size)
+    for i in range(0, pop_size):
+        new_individual = random_chromosome(data)
+        population.append(Individual(new_ch[0], new_ch[1]))
+    return population
 
 
 def fitness(build_cost, pop):

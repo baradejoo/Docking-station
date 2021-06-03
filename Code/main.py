@@ -9,4 +9,4 @@ if __name__ == '__main__':
     drones_params = [(2,3,4), (3,4,4)]  # x,y,cost in tuple #TODO: wojtek
     build_cost = np.zeros(graph_size)  # TODO: wojtek, funckja ktora to robi    fun(cost_min, cost_max)
 
-    ga.genetic_alg(drones_params, build_cost, pop_size, alg_iteration)
+    ga.genetic_alg(drones_params, build_cost, pop_size, alg_iteration, graph_size)
