@@ -8,16 +8,14 @@ class Drone:
         """
         :param id: id of each drone
         :param x_0: x coordinate of drone at the map
-        :param y_0: y coordinate of drone at the map
+        :pamram y_0: y coordinate of drone at the map
         """
         self.id = id_
-        self.x_0 = drone_param_[0]
-        self.y_0 = drone_param_[1]
-        self.maintenance_cost = drone_param_[2]
+        self.x_0, self.y_0, self.income = drone_param_
 
     def __str__(self) -> str:
-        return f"Drone no. {self.id} -> coordinates: [{self.x_0},{self.y_0}], maintenance cost: " \
-               f"{self.maintenance_cost}".format(self=self)
+        return f"Drone no. {self.id} -> coordinates: [{self.x_0},{self.y_0}], income: " \
+               f"{self.income}".format(self=self)
 
 
 class Individual:
