@@ -211,6 +211,7 @@ def fitness(pop: List[Individual], build_costs, drones_list):
     for ind in pop:
         x = ind.chromosome[0]
         y = ind.chromosome[1]
+        print(x, y, len(build_costs))
         val = obj_fcn(build_costs[x][y],ind,drones_list)
         ind.obj_fcn = val
         obj_fcn_sum += val

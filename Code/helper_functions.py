@@ -28,9 +28,9 @@ def generate_stations_localisation(pop_size, graph_size) -> List[Tuple[int]]:
 
 
 def generate_build_cost(graph_size, min_cost, max_cost):
-    build_cost = [[0 for x in range(graph_size)] for y in range(graph_size)]
-    for i in range(0, graph_size):
-        for j in range(0, graph_size):
+    build_cost = [[0 for x in range(graph_size+1)] for y in range(graph_size+1)]
+    for i in range(0, graph_size+1):
+        for j in range(0, graph_size+1):
             build_cost[i][j] = randint(min_cost, max_cost)
     return build_cost
 
