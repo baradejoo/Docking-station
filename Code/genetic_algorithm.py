@@ -1,3 +1,7 @@
+from os import X_OK
+from numpy.lib.index_tricks import ix_
+
+from numpy.matrixlib import defmatrix
 import visualisation as vs
 import helper_functions as helper
 import numpy as np
@@ -10,7 +14,7 @@ import math
 class Individual:
     """Class containing individual chromosome and rating"""
 
-    def __init__(self, station_coordinates_: List, prob_: float = 0):
+    def __init__(self, station_coordinates_: Tuple,  prob_: float = 0):
         """
         :param chromosome: described one individual (station) as 2 coordinates in binary: x and y
         :param obj_fcn: cost function which it's minimise
@@ -19,10 +23,28 @@ class Individual:
         self.chromosome = station_coordinates_
         self.obj_fcn = 0
         self.prob = prob_
+        self.range = 80
 
     def __str__(self) -> str:
         return f"Individual -> chromosome: {self.chromosome}, probability: {self.prob}, " \
-               f"cost function: {self.obj_fcn}".format(self=self)
+               f"cost function: {self.obj_fcn}, range: {self.range}".format(self=self)
+
+
+class Drone:
+    """Class containing drone parameters"""
+
+    def __init__(self, id_, drone_param_: Tuple):
+        """
+        :param id: id of each drone
+        :param x_0: x coordinate of drone at the map
+        :pamram y_0: y coordinate of drone at the map
+        """
+        self.id = id_
+        self.x, self.y, self.income = drone_param_
+
+    def __str__(self) -> str:
+        return f"Drone no. {self.id} -> coordinates: [{self.x},{self.y}], income: " \
+               f"{self.income}".format(self=self)
 
 
 class Exception1(Exception):
@@ -31,7 +53,7 @@ class Exception1(Exception):
         super().__init__(self.message)
 
 
-def genetic_alg(drones_params, build_cost, pop_size, alg_iteration, graph_size):
+def genetic_alg(drones_params, build_costs, pop_size, alg_iteration, graph_size):
     """Implementation of genetic algorithm
     :return: best solution"""
 
@@ -39,27 +61,38 @@ def genetic_alg(drones_params, build_cost, pop_size, alg_iteration, graph_size):
 
     # Creating drones objects
     for idx, params in enumerate(drones_params):
-        drones_list.append(helper.Drone(idx, params))
+        drones_list.append(Drone(idx, params))
+
+    print_drones(drones_list)
 
     pop = init_pop(pop_size, graph_size)
 
-    crossover(pop[1], pop[2], graph_size)
-    # new_pop = cross_pop(pop, graph_size, 0.5)
-    # pop, best_sol, best_val, av_sol = fitness(drones_params, build_cost, pop)
-    # pop = selection(drones_params, build_cost, pop)
+    print_pop(pop)
 
-    # i = 1
-    # while i <= alg_iteration:
-    #     pop = cross_pop()
-    #     pop = mutation()
-    #     pop, it_best_sol, it_best_val, av_sol = fitness()
-    #
-    #     if it_best_sol.obj_fcn < best_sol.obj_fcn:
-    #         best_sol = deepcopy(it_best_sol)
-    #
-    #     pop = selection(data, pop)
+    #crossover(pop[1], pop[2], graph_size)
+    pop = fitness(pop, build_costs, drones_list)
 
-    # i += 1
+    #print_pop(pop)
+
+    pop = selection(pop)
+
+    #print_pop(pop)
+
+    i = 1
+    while i <= alg_iteration:
+        pop = cross_pop(pop, graph_size, 0.5)
+        #print("cross",pop)
+        #pop = mutation(pop, 0.1, graph_size)
+        #print("mute",pop)
+        pop = fitness(pop, build_costs, drones_list)
+        print("fitness",pop)
+        pop = selection(pop)
+
+        print_pop(pop,"iteration num = {}".format(i))
+
+        i += 1
+
+    
 
     return 1
 
@@ -78,14 +111,63 @@ def init_pop(pop_size, graph_size) -> List[Individual]:
 
     return population
 
+def dist_drone_to_station(drone,individual):
+    dx = drone.x
+    dy = drone.y
+    ix = individual.chromosome[0]
+    iy = individual.chromosome[1]
 
-def fitness(build_cost, pop):
-    pass
-    # TODO: liczyc wartosci funckji celu dla kazdego osobnika i prawdopobienstwo wybrania na podsawie funkji ceku
-    # TODO: prawdopobienstwo = funkcja celu jednego osobnika/  sume wszystkich
+    #print("drone and ind coords = ",dx,dy,ix,iy)
+    dist = math.sqrt((dx - ix)**2 + (dy - iy)**2)
+    #print("dist = ",dist)
+    return dist
 
 
-def selection(drones_params, build_cost, pop: List[Individual]):
+def obj_fcn(build_cost, individual: Individual, drones_list: List[Drone]):
+    income_sum = 0
+
+    for d in drones_list:
+        dist = dist_drone_to_station(d,individual)
+        #print(dist)
+        if dist < individual.range:
+            income_sum += d.income
+    
+    return income_sum - build_cost
+
+
+def print_pop(pop,msg = ""):
+    print("\nPrinting POP ",msg)
+    for i in pop:
+        print(i)
+    
+    print("\n")
+
+
+def print_drones(drones):
+    print("\nPrinting drones:")
+    for d in drones:
+        print(d)
+
+    print("\n")
+
+def fitness(pop: List[Individual], build_costs, drones_list):
+
+    obj_fcn_sum = 0
+
+    for ind in pop:
+        x = ind.chromosome[0]
+        y = ind.chromosome[1]
+        val = obj_fcn(build_costs[x][y],ind,drones_list)
+        ind.obj_fcn = val
+        obj_fcn_sum += val
+    
+    for ind in pop:
+        ind.prob = ind.obj_fcn / obj_fcn_sum
+
+    return pop
+
+
+def selection(pop: List[Individual]):
     """Select individuals based on probability calculated by fitness
         :return: population to reproduce"""
 
@@ -123,7 +205,7 @@ def cross_pop(pop: List[Individual], graph_size, cross_factor) -> List[Individua
     return crossed_pop
 
 
-def mutation(pop: List[Individual], mutation_factor: float, pop_size, graph_size) -> List[Individual]:
+def mutation(pop: List[Individual], mutation_factor: float, graph_size) -> List[Individual]:
     """Mutates random gens with probability
         :return: population with small percentage of mutated individuals"""
 
@@ -193,14 +275,14 @@ def method2_crossover(ind1: Individual, ind2: Individual, graph_size) -> Tuple[I
     """ Crossover function, which used BCD code to describe coordinates. It allows crossing gens in specific way,
         such as: crossing gens which described only number of units (not number od decimals or hundredths) """
 
-    print("Values: x and y before crossover fun.: {}, {} -> 1 parent".format(ind1.chromosome[0], ind1.chromosome[1]))
-    print("Values: x and y before crossover fun.: {}, {} -> 2 parent".format(ind2.chromosome[0], ind2.chromosome[1]))
+    #print("Values: x and y before crossover fun.: {}, {} -> 1 parent".format(ind1.chromosome[0], ind1.chromosome[1]))
+    #print("Values: x and y before crossover fun.: {}, {} -> 2 parent".format(ind2.chromosome[0], ind2.chromosome[1]))
 
     ind1_BCD = helper.convert_chromosome_to_BCD(ind1, graph_size)
     ind2_BCD = helper.convert_chromosome_to_BCD(ind2, graph_size)
 
-    print(ind1_BCD)
-    print(ind2_BCD)
+    #print(ind1_BCD)
+    #print(ind2_BCD)
     ind1_units_BCD = (ind1_BCD[0][-4:], ind1_BCD[1][-4:])
     ind2_units_BCD = (ind2_BCD[0][-4:], ind2_BCD[1][-4:])
 
@@ -214,10 +296,10 @@ def method2_crossover(ind1: Individual, ind2: Individual, graph_size) -> Tuple[I
 
     children = (Individual(ind1_decimal), Individual(ind2_decimal))
 
-    print("Values: x and y after crossover fun.: {}, {} -> 1 child".format(children[0].chromosome[0],
-                                                                           children[0].chromosome[1]))
-    print("Values: x and y after crossover fun.: {}, {} -> 2 child".format(children[1].chromosome[0],
-                                                                           children[1].chromosome[1]))
+    #print("Values: x and y after crossover fun.: {}, {} -> 1 child".format(children[0].chromosome[0],
+    #                                                                       children[0].chromosome[1]))
+    #print("Values: x and y after crossover fun.: {}, {} -> 2 child".format(children[1].chromosome[0],
+    #                                                                       children[1].chromosome[1]))
 
     return children
 
@@ -230,7 +312,7 @@ def crossover(ind1: Individual, ind2: Individual, graph_size) -> Tuple[Individua
        :param ind2: second one of the parents
        :return: children (new individual who is the part of the new population)
     """
-    method = 2
+    method = 1
     if method == 2:
         children = method2_crossover(ind1, ind2, graph_size)
     else:

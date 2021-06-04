@@ -3,22 +3,6 @@ from typing import List, Tuple
 import genetic_algorithm as ga
 
 
-class Drone:
-    """Class containing drone parameters"""
-
-    def __init__(self, id_, drone_param_: Tuple):
-        """
-        :param id: id of each drone
-        :param x_0: x coordinate of drone at the map
-        :pamram y_0: y coordinate of drone at the map
-        """
-        self.id = id_
-        self.x_0, self.y_0, self.income = drone_param_
-
-    def __str__(self) -> str:
-        return f"Drone no. {self.id} -> coordinates: [{self.x_0},{self.y_0}], income: " \
-               f"{self.income}".format(self=self)
-
 
 def generate_drones_params(graph_size, drones_amount, max_cost) -> List[Tuple]:
     drones_params = []
