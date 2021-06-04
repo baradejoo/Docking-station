@@ -54,11 +54,11 @@ class Exception1(Exception):
         super().__init__(self.message)
 
 
-def visualisation(stations: List[Individual], drones_coordinates: List[Tuple], stations_radius: int, graph_size):
+def visualisation(stations: List[Individual], drones_list: List[Drone], stations_radius: int, graph_size):
     stations_center_x = [i.chromosome[0] for i in stations]
     stations_center_y = [i.chromosome[1] for i in stations]
-    drones_x = [i[0] for i in drones_coordinates]
-    drones_y = [i[1] for i in drones_coordinates]
+    drones_x = [d.x for d in drones_list]
+    drones_y = [d.y for d in drones_list]
 
     fig, ax = plt.subplots()
     ax = plt.gca()
@@ -74,9 +74,7 @@ def visualisation(stations: List[Individual], drones_coordinates: List[Tuple], s
     fig.show()
 
 
-def genetic_alg(drones_params, build_costs, pop_size, alg_iteration, graph_size):
-    """Implementation of genetic algorithm
-    :return: best solution"""
+def full_algorithm(drones_params, build_costs, pop_size, alg_iteration, graph_size):
 
     drones_list = []  # Containing list of drones objects
 
@@ -84,40 +82,73 @@ def genetic_alg(drones_params, build_costs, pop_size, alg_iteration, graph_size)
     for idx, params in enumerate(drones_params):
         drones_list.append(Drone(idx, params))
 
-    print_drones(drones_list)
+    best_stations = []
+
+    while len(drones_list) > 2:
+        best_station = genetic_alg(drones_list, build_costs, pop_size, alg_iteration, graph_size)
+        best_stations.append(best_station)
+
+        drones_list = delete_drones_covered_by_ind(best_station, drones_list)
+
+
+    drones_list = []  # Containing list of drones objects
+
+    # Creating drones objects
+    for idx, params in enumerate(drones_params):
+        drones_list.append(Drone(idx, params))
+
+    visualisation(best_stations, drones_list, 80, graph_size)
+
+
+def genetic_alg(drones_list, build_costs, pop_size, alg_iteration, graph_size):
+    """Implementation of genetic algorithm
+    :return: best solution"""
 
     pop = init_pop(pop_size, graph_size)
 
-    print_pop(pop)
-
-    #crossover(pop[1], pop[2], graph_size)
-    pop = fitness(pop, build_costs, drones_list)
-
     #print_pop(pop)
 
-    pop = selection(pop)
+    pop = fitness(pop, build_costs, drones_list)
 
-    print_pop(pop)
+    pop = selection(pop)
 
     i = 1
     while i <= alg_iteration:
         pop = cross_pop(pop, graph_size, 0.5)
-        #print("cross",pop)
         #pop = mutation(pop, 0.1, graph_size)
-        #print("mute",pop)
         pop = fitness(pop, build_costs, drones_list)
-        #print("fitness",pop)
         pop = selection(pop)
 
-        print_pop(pop,"iteration num = {}".format(i))
-
-        visualisation(pop,drones_params,80,graph_size)
+        #print_pop(pop,"iteration num = {}".format(i))
+        
 
         i += 1
 
-    
+    print_pop(pop)
 
-    return 1
+    #visualisation(pop,drones_list,80,graph_size)
+
+    return find_best_individual(pop)
+
+
+def find_best_individual(pop: List[Individual]):
+    best = pop[0]
+
+    for i in pop:
+        if i.obj_fcn > best.obj_fcn:
+            best = i
+    
+    return best
+
+
+def delete_drones_covered_by_ind(individual: Individual,drones_list: List[Drone]):
+    new_drones_list = []
+    for d in drones_list:
+        dist = dist_drone_to_station(d, individual)
+        if dist > individual.range:
+            new_drones_list.append(d)
+
+    return new_drones_list
 
 
 def init_pop(pop_size, graph_size) -> List[Individual]:
