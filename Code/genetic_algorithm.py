@@ -63,13 +63,14 @@ def visualisation(stations: List[Individual], drones_coordinates: List[Tuple], s
     fig, ax = plt.subplots()
     ax = plt.gca()
     ax.cla()
-    fig.set_size_inches(15, 15)
     ax.plot(graph_size, graph_size)
     for idx in range(len(stations)):
         circle = plt.Circle((stations_center_x[idx], stations_center_y[idx]), stations_radius, color='b', fill=False)
         ax.add_patch(circle)
 
-    ax.plot(stations_center_x, stations_center_y, 'bx', drones_x, drones_y, 'ko')
+    ax.plot(stations_center_x, stations_center_y, 'b.', markersize=40)
+    ax.plot(drones_x, drones_y, 'kx', markersize=15)
+    fig.set_size_inches(20, 20)
     fig.show()
 
 
