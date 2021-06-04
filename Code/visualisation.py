@@ -1,11 +1,12 @@
+from genetic_algorithm import Individual
 from typing import List, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
 
 
-def visualisation(stations_center_coordinates: List[Tuple], drones_coordinates: List[Tuple], stations_radius: List):
-    stations_center_x = [i[0] for i in stations_center_coordinates]
-    stations_center_y = [i[1] for i in stations_center_coordinates]
+def visualisation(stations: List[Individual], drones_coordinates: List[Tuple], stations_radius: List):
+    stations_center_x = [i.chromosome[0] for i in stations]
+    stations_center_y = [i.chromosome[1] for i in stations]
     drones_x = [i[0] for i in drones_coordinates]
     drones_y = [i[1] for i in drones_coordinates]
 

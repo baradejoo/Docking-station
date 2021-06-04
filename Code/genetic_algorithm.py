@@ -2,13 +2,14 @@ from os import X_OK
 from numpy.lib.index_tricks import ix_
 
 from numpy.matrixlib import defmatrix
-import visualisation as vs
+#import visualisation as vs
 import helper_functions as helper
 import numpy as np
 from typing import List, Tuple
 from random import randint, random
 import random
 import math
+import matplotlib.pyplot as plt
 
 
 class Individual:
@@ -27,7 +28,7 @@ class Individual:
 
     def __str__(self) -> str:
         return f"Individual -> chromosome: {self.chromosome}, probability: {self.prob}, " \
-               f"cost function: {self.obj_fcn}, range: {self.range}".format(self=self)
+               f"cost function: {self.obj_fcn}".format(self=self)
 
 
 class Drone:
@@ -53,6 +54,25 @@ class Exception1(Exception):
         super().__init__(self.message)
 
 
+def visualisation(stations: List[Individual], drones_coordinates: List[Tuple], stations_radius: int, graph_size):
+    stations_center_x = [i.chromosome[0] for i in stations]
+    stations_center_y = [i.chromosome[1] for i in stations]
+    drones_x = [i[0] for i in drones_coordinates]
+    drones_y = [i[1] for i in drones_coordinates]
+
+    fig, ax = plt.subplots()
+    ax = plt.gca()
+    ax.cla()
+    fig.set_size_inches(15, 15)
+    ax.plot(graph_size, graph_size)
+    for idx in range(len(stations)):
+        circle = plt.Circle((stations_center_x[idx], stations_center_y[idx]), stations_radius, color='b', fill=False)
+        ax.add_patch(circle)
+
+    ax.plot(stations_center_x, stations_center_y, 'bx', drones_x, drones_y, 'ko')
+    fig.show()
+
+
 def genetic_alg(drones_params, build_costs, pop_size, alg_iteration, graph_size):
     """Implementation of genetic algorithm
     :return: best solution"""
@@ -76,7 +96,7 @@ def genetic_alg(drones_params, build_costs, pop_size, alg_iteration, graph_size)
 
     pop = selection(pop)
 
-    #print_pop(pop)
+    print_pop(pop)
 
     i = 1
     while i <= alg_iteration:
@@ -85,10 +105,12 @@ def genetic_alg(drones_params, build_costs, pop_size, alg_iteration, graph_size)
         #pop = mutation(pop, 0.1, graph_size)
         #print("mute",pop)
         pop = fitness(pop, build_costs, drones_list)
-        print("fitness",pop)
+        #print("fitness",pop)
         pop = selection(pop)
 
         print_pop(pop,"iteration num = {}".format(i))
+
+        visualisation(pop,drones_params,80,graph_size)
 
         i += 1
 
