@@ -222,6 +222,7 @@ def method2_crossover(ind1: Individual, ind2: Individual, graph_size) -> Tuple[I
     return children
 
 
+
 def crossover(ind1: Individual, ind2: Individual, graph_size) -> Tuple[Individual, Individual]:
     """ Crossing one part of individual with the other part of individual """
     """
