@@ -183,10 +183,15 @@ def obj_fcn(build_cost, individual: Individual, drones_list: List[Drone]):
     for d in drones_list:
         dist = dist_drone_to_station(d,individual)
         #print(dist)
-        if dist < individual.range:
+        if dist <= individual.range:
             income_sum += d.income
-    
-    return income_sum - build_cost
+
+    obj_fcn_val = income_sum - build_cost
+
+    if obj_fcn_val < 0:
+        return 0
+    else:
+        return obj_fcn_val
 
 
 def print_pop(pop,msg = ""):
@@ -211,7 +216,7 @@ def fitness(pop: List[Individual], build_costs, drones_list):
     for ind in pop:
         x = ind.chromosome[0]
         y = ind.chromosome[1]
-        print(x, y, len(build_costs))
+        #print(x, y, len(build_costs))
         val = obj_fcn(build_costs[x][y],ind,drones_list)
         ind.obj_fcn = val
         obj_fcn_sum += val
