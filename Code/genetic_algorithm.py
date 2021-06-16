@@ -74,7 +74,7 @@ def visualisation(stations: List[Individual], drones_list: List[Drone], stations
     fig.show()
 
 
-def full_algorithm(drones_params, build_costs, pop_size, alg_iteration, graph_size):
+def full_algorithm(drones_params, build_costs, pop_size, alg_iteration, graph_size, max_drones_in_station):
 
     drones_list = []  # Containing list of drones objects
 
@@ -88,7 +88,7 @@ def full_algorithm(drones_params, build_costs, pop_size, alg_iteration, graph_si
         best_station = genetic_alg(drones_list, build_costs, pop_size, alg_iteration, graph_size)
         best_stations.append(best_station)
 
-        drones_list = delete_drones_covered_by_ind(best_station, drones_list)
+        drones_list = delete_drones_covered_by_ind(best_station, drones_list, max_drones_in_station)
 
 
     drones_list = []  # Containing list of drones objects
@@ -98,6 +98,8 @@ def full_algorithm(drones_params, build_costs, pop_size, alg_iteration, graph_si
         drones_list.append(Drone(idx, params))
 
     visualisation(best_stations, drones_list, 80, graph_size)
+
+    print("stations num = {}".format(len(best_stations)))
 
 
 def genetic_alg(drones_list, build_costs, pop_size, alg_iteration, graph_size):
@@ -141,12 +143,15 @@ def find_best_individual(pop: List[Individual]):
     return best
 
 
-def delete_drones_covered_by_ind(individual: Individual,drones_list: List[Drone]):
+def delete_drones_covered_by_ind(individual: Individual, drones_list: List[Drone], drones_to_delete_num: int):
     new_drones_list = []
+    deleted_drones_num = 0
     for d in drones_list:
         dist = dist_drone_to_station(d, individual)
-        if dist > individual.range:
+        if dist > individual.range or deleted_drones_num >= drones_to_delete_num:
             new_drones_list.append(d)
+        else:
+            deleted_drones_num += 1
 
     return new_drones_list
 
