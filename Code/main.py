@@ -57,9 +57,23 @@ def Wojtek_test():
     build_cost = helper.generate_build_cost(graph_size, min_cost, max_cost)
 
     i = 0
+    average_cost = 0
+    variance_list = []
+    cost_list = []
     while i < 10:
-        ga.full_algorithm(drones_params, build_cost, pop_size, alg_iteration, graph_size, max_drones_in_station)
+        cost = ga.full_algorithm(drones_params, build_cost, pop_size, alg_iteration, graph_size, max_drones_in_station)
         i += 1
+        average_cost += cost
+        cost_list.append(cost)
+
+    average_cost = average_cost/10
+    variance_list = [(v-average_cost)**2 for v in cost_list]
+    variance = sum(variance_list)/10
+    std = np.sqrt(variance)
+
+    print("Średni koszt dla 10 prób: ", average_cost)
+    print("Wariancja dla 10 prób: ", variance)
+    print("Odchylenie standardowe dla 10 prób: ", std)
 
 
 
