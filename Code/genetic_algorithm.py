@@ -292,25 +292,12 @@ def mutation(pop: List[Individual], mutation_factor: float, graph_size) -> List[
         string = helper.convert_chromosome_to_bin(pop[e], len(bin(graph_size)[2:]))
         # print("stary:", string, "\n")
         r = randint(0, len(string)-1)
-        # x = randint(1, len(string)/2 - 1)
-        # y = randint(len(string)/2+2, len(string)-1)
-        # x_or_y = randint(0, 1)
         for i in string:
             array_string.append(int(i))
         if array_string[r] == 1:
             array_string[r] = 0
         else:
             array_string[r] = 1
-        # if x_or_y == 0:
-        #     if array_string[x] == 1:
-        #         array_string[x] = 0
-        #     else:
-        #         array_string[x] = 1
-        # else:
-        #     if array_string[y] == 1:
-        #         array_string[y] = 0
-        #     else:
-        #         array_string[y] = 1
         gen_x = array_string[:9]
         gen_y = array_string[9:]
         string_x = [str(int) for int in gen_x]
