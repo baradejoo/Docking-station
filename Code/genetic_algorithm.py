@@ -76,7 +76,7 @@ def visualisation(stations: List[Individual], drones_list: List[Drone], stations
     fig.show()
 
 
-def full_algorithm(drones_params, build_costs, pop_size, alg_iteration, graph_size, max_drones_in_station):
+def full_algorithm(drones_params, build_costs, pop_size, alg_iteration, graph_size, max_drones_in_station) -> int:
     drones_list = []  # Containing list of drones objects
 
     # Creating drones objects
@@ -100,8 +100,13 @@ def full_algorithm(drones_params, build_costs, pop_size, alg_iteration, graph_si
 
     visualisation(best_stations, drones_list, RANGE, graph_size)
 
-    print("stations num = {}".format(len(best_stations)))
+    print("stations num = {}\n".format(len(best_stations)))
 
+    cost_summary = 0
+    for station in best_stations:
+        cost_summary += station.obj_fcn
+
+    return cost_summary
 
 def genetic_alg(drones_list, build_costs, pop_size, alg_iteration, graph_size):
     """Implementation of genetic algorithm
