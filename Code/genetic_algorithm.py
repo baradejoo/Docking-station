@@ -11,6 +11,8 @@ import random
 import math
 import matplotlib.pyplot as plt
 
+RANGE = 25
+
 
 class Individual:
     """Class containing individual chromosome and rating"""
@@ -24,7 +26,7 @@ class Individual:
         self.chromosome = station_coordinates_
         self.obj_fcn = 0
         self.prob = prob_
-        self.range = 50
+        self.range = RANGE
 
     def __str__(self) -> str:
         return f"Individual -> chromosome: {self.chromosome}, probability: {self.prob}, " \
@@ -96,7 +98,7 @@ def full_algorithm(drones_params, build_costs, pop_size, alg_iteration, graph_si
     for idx, params in enumerate(drones_params):
         drones_list.append(Drone(idx, params))
 
-    visualisation(best_stations, drones_list, 50, graph_size)
+    visualisation(best_stations, drones_list, RANGE, graph_size)
 
     print("stations num = {}".format(len(best_stations)))
 
@@ -218,13 +220,15 @@ def fitness(pop: List[Individual], build_costs, drones_list):
     for ind in pop:
         x = ind.chromosome[0]
         y = ind.chromosome[1]
-        # print(x, y, len(build_costs))
         val = obj_fcn(build_costs[x][y], ind, drones_list)
         ind.obj_fcn = val
         obj_fcn_sum += val
 
     for ind in pop:
-        ind.prob = ind.obj_fcn / obj_fcn_sum
+        if obj_fcn_sum != 0:
+            ind.prob = ind.obj_fcn / obj_fcn_sum
+        else:
+            ind.prob = 1 / len(pop)
 
     return pop
 
