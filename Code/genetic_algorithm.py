@@ -40,7 +40,7 @@ class Drone:
         """
         :param id: id of each drone
         :param x_0: x coordinate of drone at the map
-        :pamram y_0: y coordinate of drone at the map
+        :param y_0: y coordinate of drone at the map
         """
         self.id = id_
         self.x, self.y, self.income = drone_param_
@@ -118,7 +118,7 @@ def genetic_alg(drones_list, build_costs, pop_size, alg_iteration, graph_size):
     i = 1
     while i <= alg_iteration:
         pop = cross_pop(pop, graph_size, 0.5)
-        # pop = mutation(pop, 0.1, graph_size)
+        pop = mutation(pop, 0.05, graph_size)
         pop = fitness(pop, build_costs, drones_list)
         pop = selection(pop)
 
@@ -216,7 +216,6 @@ def print_drones(drones):
 
 def fitness(pop: List[Individual], build_costs, drones_list):
     obj_fcn_sum = 0
-
     for ind in pop:
         x = ind.chromosome[0]
         y = ind.chromosome[1]
@@ -286,21 +285,34 @@ def mutation(pop: List[Individual], mutation_factor: float, graph_size) -> List[
                 duplications.append(x)
             if len(random_stations) == mutated_amount:
                 break
-    # print(random_stations)
+    # print("random stations:", random_stations)
     for e in random_stations:
         array_string = []
-        # print(pop[e])
+        # print("losowa stacja:", e, "---", pop[e])
         string = helper.convert_chromosome_to_bin(pop[e], len(bin(graph_size)[2:]))
         # print("stary:", string, "\n")
-        x = randint(0, len(string) - 1)
+        r = randint(0, len(string)-1)
+        # x = randint(1, len(string)/2 - 1)
+        # y = randint(len(string)/2+2, len(string)-1)
+        # x_or_y = randint(0, 1)
         for i in string:
             array_string.append(int(i))
-        if array_string[x] == 1:
-            array_string[x] = 0
+        if array_string[r] == 1:
+            array_string[r] = 0
         else:
-            array_string[x] = 1
-        gen_x = array_string[:8]
-        gen_y = array_string[8:]
+            array_string[r] = 1
+        # if x_or_y == 0:
+        #     if array_string[x] == 1:
+        #         array_string[x] = 0
+        #     else:
+        #         array_string[x] = 1
+        # else:
+        #     if array_string[y] == 1:
+        #         array_string[y] = 0
+        #     else:
+        #         array_string[y] = 1
+        gen_x = array_string[:9]
+        gen_y = array_string[9:]
         string_x = [str(int) for int in gen_x]
         string_x = "".join(string_x)
         string_y = [str(int) for int in gen_y]
@@ -309,8 +321,16 @@ def mutation(pop: List[Individual], mutation_factor: float, graph_size) -> List[
         # print("genx:", gen_x, "\n", "geny:", gen_y,"\n")
         # print("string_x:", string_x)
         # print("string_y:", string_y)
-        pop[e].chromosome = [int(string_x, 2), int(string_y, 2)]
+        x = int(string_x, 2)
+        y = int(string_y, 2)
+        if x > 256:
+            x = int(int(string_x, 2)/2)
+        if y > 256:
+            y = int(int(string_y, 2)/2)
+        pop[e].chromosome = [x, y]
+        # pop[e].chromosome = [int(string_x, 2), int(string_y, 2)]
         # print("chromosom:", pop[e].chromosome)
+    return pop
 
 
 def method1_crossover(ind1: Individual, ind2: Individual, graph_size) -> Tuple[Individual, Individual]:

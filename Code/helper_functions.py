@@ -48,7 +48,7 @@ def generate_drones_params(graph_size, drones_amount, max_cost, drones_clusters,
     return drones_params
 
 
-def generate_stations_localisation(pop_size, graph_size) -> List[Tuple[int]]:
+def generate_stations_localisation(pop_size, graph_size) -> List[Tuple[int, int]]:
     stations_coordinates = []
     for i in range(0, pop_size):
         x = randint(0, graph_size)
@@ -74,6 +74,7 @@ def convert_chromosome_to_bin(ind, max_number_gens: int) -> str:
     gen = part1_gen + part2_gen
 
     if len(gen) != (2 * max_bits):
+        print("len(gen):", len(gen))
         raise ga.Exception1
 
     return gen
