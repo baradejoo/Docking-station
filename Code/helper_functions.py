@@ -4,7 +4,7 @@ import genetic_algorithm as ga
 import numpy as np
 
 
-def generate_drones_params(graph_size, drones_amount, max_cost, drones_clusters) -> List[Tuple]:
+def generate_drones_params(graph_size, drones_amount, max_cost, drones_clusters, covariance_factor) -> List[Tuple]:
     divided_square_num = int(graph_size / drones_clusters * graph_size / drones_clusters)
     max_number_drones_in_square = drones_amount // divided_square_num
     left_number_drones_in_square = drones_amount - max_number_drones_in_square * divided_square_num
@@ -22,7 +22,8 @@ def generate_drones_params(graph_size, drones_amount, max_cost, drones_clusters)
 
     for i in range(0, len(center_squares)):
         print(i)
-        x, y = np.random.multivariate_normal(center_squares[i], [[drones_clusters, 0], [0, drones_clusters]],
+        x, y = np.random.multivariate_normal(center_squares[i], [[drones_clusters*covariance_factor, 0],
+                                                                 [0, drones_clusters*covariance_factor]],
                                              max_number_drones_in_square).T
         for j in x:
             x = int(j)

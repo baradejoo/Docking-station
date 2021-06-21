@@ -11,11 +11,12 @@ def do_test():
     drones_amount = 100
     max_drones_in_station = round(drones_amount * 0.2)
     drones_clusters = 128
+    covariance_factor = 3 #nie szaleć (dobrac zakres tak zeby drona nie wyjebac poza mape)
     alg_iteration = 5
     max_drone_cost = 8
     min_cost = 1
     max_cost = 3
-    drones_params = helper.generate_drones_params(graph_size, drones_amount, max_drone_cost, drones_clusters)
+    drones_params = helper.generate_drones_params(graph_size, drones_amount, max_drone_cost, drones_clusters, covariance_factor)
     build_cost = helper.generate_build_cost(graph_size, min_cost, max_cost)
     
     i = 0
