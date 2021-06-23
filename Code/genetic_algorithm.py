@@ -1,7 +1,4 @@
-from os import X_OK
-from numpy.lib.index_tricks import ix_
 
-from numpy.matrixlib import defmatrix
 # import visualisation as vs
 import helper_functions as helper
 import numpy as np
@@ -76,7 +73,7 @@ def visualisation(stations: List[Individual], drones_list: List[Drone], stations
     fig.show()
 
 
-def full_algorithm(drones_params, build_costs, pop_size, alg_iteration, graph_size, max_drones_in_station) -> int:
+def full_algorithm(graph_size, pop_size, gen_iteration, max_drones_in_station, drones_params, build_costs):
     drones_list = []  # Containing list of drones objects
 
     # Creating drones objects
@@ -86,7 +83,7 @@ def full_algorithm(drones_params, build_costs, pop_size, alg_iteration, graph_si
     best_stations = []
 
     while len(drones_list) > 2:
-        best_station = genetic_alg(drones_list, build_costs, pop_size, alg_iteration, graph_size)
+        best_station = genetic_alg(drones_list, build_costs, pop_size, gen_iteration, graph_size)
         best_stations.append(best_station)
         print_pop(best_stations)
         print(len(best_stations))
@@ -100,13 +97,12 @@ def full_algorithm(drones_params, build_costs, pop_size, alg_iteration, graph_si
 
     visualisation(best_stations, drones_list, RANGE, graph_size)
 
-    print("stations num = {}\n".format(len(best_stations)))
-
-    cost_summary = 0
+    station_costs = np.array([])
     for station in best_stations:
-        cost_summary += station.obj_fcn
+        station_costs = np.append(station_costs, [station.obj_fcn])
 
-    return cost_summary
+    return station_costs
+
 
 def genetic_alg(drones_list, build_costs, pop_size, alg_iteration, graph_size):
     """Implementation of genetic algorithm

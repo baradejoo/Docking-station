@@ -6,11 +6,13 @@ import numpy as np
 
 def generate_drones_params(graph_size, drones_amount, max_cost, drones_clusters, covariance_factor) -> List[Tuple]:
     divided_square_num = int(graph_size / drones_clusters * graph_size / drones_clusters)
-    max_number_drones_in_square = drones_amount // divided_square_num
-    left_number_drones_in_square = drones_amount - max_number_drones_in_square * divided_square_num
-    # rand square with distributed drones position from: left_number_drones_in_square
+
     # lefts drones where distributed with number: max_number_drones_in_square in left squares
-    drones_coordinates = []
+    max_number_drones_in_square = drones_amount // divided_square_num
+
+    # rand square with distributed drones position from: left_number_drones_in_square
+    left_number_drones_in_square = drones_amount - max_number_drones_in_square * divided_square_num
+
     center_squares = []
     for i in range(0, int(np.sqrt(divided_square_num))):
         for j in range(0, int(np.sqrt(divided_square_num))):
@@ -20,6 +22,7 @@ def generate_drones_params(graph_size, drones_amount, max_cost, drones_clusters,
     drones_coordinates_x = []
     drones_coordinates_y = []
 
+    # normal distribution around clusters centers
     for i in range(0, len(center_squares)):
         print(i)
         x, y = np.random.multivariate_normal(center_squares[i], [[drones_clusters*covariance_factor, 0],
@@ -32,13 +35,14 @@ def generate_drones_params(graph_size, drones_amount, max_cost, drones_clusters,
             y = int(j)
             drones_coordinates_y.append(y)
 
-    # rand for left number of drones
+    # rand for left number of drones, it's situation where pop size does not divide by divided_square_num
     for i in range(left_number_drones_in_square):
         x = randint(0, graph_size)
         y = randint(0, graph_size)
         drones_coordinates_x.append(x)
         drones_coordinates_y.append(y)
 
+    # add drones params to final list
     drones_params = []
     for i in range(len(drones_coordinates_x)):
         income = randint(1, max_cost)
