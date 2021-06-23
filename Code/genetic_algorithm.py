@@ -85,11 +85,7 @@ def genetic_alg(drones_list, build_costs, pop_size, alg_iteration, graph_size):
     :return: best solution"""
 
     pop = init_pop(pop_size, graph_size)
-
-    # print_pop(pop)
-
     pop = fitness(pop, build_costs, drones_list)
-
     pop = selection(pop)
 
     i = 1
@@ -98,19 +94,9 @@ def genetic_alg(drones_list, build_costs, pop_size, alg_iteration, graph_size):
         pop = mutation(pop, 0.05, graph_size)
         pop = fitness(pop, build_costs, drones_list)
         pop = selection(pop)
-
-        # print_pop(pop,"iteration num = {}".format(i))
-
         i += 1
 
-    # visualisation(pop,drones_list,80,graph_size)
-
-    return find_best_individual(pop)
-
-
-def find_best_individual(pop: List[Individual]):
     best = pop[0]
-
     for i in pop:
         if i.obj_fcn > best.obj_fcn:
             best = i
