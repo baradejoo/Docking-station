@@ -4,7 +4,7 @@ if __name__ == '__main__':
     # parameters for test 1:
     graph_size = 256
     pop_size = 300
-    iteration_to_averaged = 2  # number of iteration needed to calculate mean and standard dev (variance also)
+    iteration_to_averaged = 4  # number of iteration needed to calculate mean and standard dev (variance also)
     gen_iteration = 5
 
     drones_amount = 100
