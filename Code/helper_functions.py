@@ -1,7 +1,34 @@
+import genetic_algorithm as ga
+
+import math
+import numpy as np
 from random import randint
 from typing import List, Tuple
-import genetic_algorithm as ga
-import numpy as np
+
+
+def delete_drones_covered_by_ind(individual, drones_list, drones_to_delete_num: int):
+    new_drones_list = []
+    deleted_drones_num = 0
+    for d in drones_list:
+        dist = dist_drone_to_station(d, individual)
+        if dist > individual.range or deleted_drones_num >= drones_to_delete_num:
+            new_drones_list.append(d)
+        else:
+            deleted_drones_num += 1
+
+    return new_drones_list
+
+
+def dist_drone_to_station(drone, individual):
+    dx = drone.x
+    dy = drone.y
+    ix = individual.chromosome[0]
+    iy = individual.chromosome[1]
+
+    # print("drone and ind coords = ",dx,dy,ix,iy)
+    dist = math.sqrt((dx - ix) ** 2 + (dy - iy) ** 2)
+    # print("dist = ",dist)
+    return dist
 
 
 def generate_drones_params(graph_size, drones_amount, max_cost, drones_clusters, covariance_factor) -> List[Tuple]:

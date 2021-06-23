@@ -1,14 +1,11 @@
-
-# import visualisation as vs
+import visualisation as vs
 import helper_functions as helper
+
 import numpy as np
 from typing import List, Tuple
 from random import randint, random
-import random
-import math
-import matplotlib.pyplot as plt
 
-RANGE = 25
+STATION_RANGE = 25
 
 
 class Individual:
@@ -23,7 +20,7 @@ class Individual:
         self.chromosome = station_coordinates_
         self.obj_fcn = 0
         self.prob = prob_
-        self.range = RANGE
+        self.range = STATION_RANGE
 
     def __str__(self) -> str:
         return f"Individual -> chromosome: {self.chromosome}, probability: {self.prob}, " \
@@ -53,26 +50,6 @@ class Exception1(Exception):
         super().__init__(self.message)
 
 
-def visualisation(stations: List[Individual], drones_list: List[Drone], stations_radius: int, graph_size):
-    stations_center_x = [i.chromosome[0] for i in stations]
-    stations_center_y = [i.chromosome[1] for i in stations]
-    drones_x = [d.x for d in drones_list]
-    drones_y = [d.y for d in drones_list]
-
-    fig, ax = plt.subplots()
-    ax = plt.gca()
-    ax.cla()
-    ax.plot(graph_size, graph_size)
-    for idx in range(len(stations)):
-        circle = plt.Circle((stations_center_x[idx], stations_center_y[idx]), stations_radius, color='b', fill=False)
-        ax.add_patch(circle)
-
-    ax.plot(stations_center_x, stations_center_y, 'b.', markersize=40)
-    ax.plot(drones_x, drones_y, 'kx', markersize=15)
-    fig.set_size_inches(20, 20)
-    fig.show()
-
-
 def full_algorithm(graph_size, pop_size, gen_iteration, max_drones_in_station, drones_params, build_costs):
     drones_list = []  # Containing list of drones objects
 
@@ -85,9 +62,8 @@ def full_algorithm(graph_size, pop_size, gen_iteration, max_drones_in_station, d
     while len(drones_list) > 2:
         best_station = genetic_alg(drones_list, build_costs, pop_size, gen_iteration, graph_size)
         best_stations.append(best_station)
-        print_pop(best_stations)
-        print(len(best_stations))
-        drones_list = delete_drones_covered_by_ind(best_station, drones_list, max_drones_in_station)
+        vs.print_pop(best_stations)
+        drones_list = helper.delete_drones_covered_by_ind(best_station, drones_list, max_drones_in_station)
 
     drones_list = []  # Containing list of drones objects
 
@@ -95,7 +71,7 @@ def full_algorithm(graph_size, pop_size, gen_iteration, max_drones_in_station, d
     for idx, params in enumerate(drones_params):
         drones_list.append(Drone(idx, params))
 
-    visualisation(best_stations, drones_list, RANGE, graph_size)
+    vs.visualisation(best_stations, drones_list, STATION_RANGE, graph_size)
 
     station_costs = np.array([])
     for station in best_stations:
@@ -142,19 +118,6 @@ def find_best_individual(pop: List[Individual]):
     return best
 
 
-def delete_drones_covered_by_ind(individual: Individual, drones_list: List[Drone], drones_to_delete_num: int):
-    new_drones_list = []
-    deleted_drones_num = 0
-    for d in drones_list:
-        dist = dist_drone_to_station(d, individual)
-        if dist > individual.range or deleted_drones_num >= drones_to_delete_num:
-            new_drones_list.append(d)
-        else:
-            deleted_drones_num += 1
-
-    return new_drones_list
-
-
 def init_pop(pop_size, graph_size) -> List[Individual]:
     """ Function witch initializes population and returns it as a list of Individuals """
 
@@ -170,24 +133,11 @@ def init_pop(pop_size, graph_size) -> List[Individual]:
     return population
 
 
-def dist_drone_to_station(drone, individual):
-    dx = drone.x
-    dy = drone.y
-    ix = individual.chromosome[0]
-    iy = individual.chromosome[1]
-
-    # print("drone and ind coords = ",dx,dy,ix,iy)
-    dist = math.sqrt((dx - ix) ** 2 + (dy - iy) ** 2)
-    # print("dist = ",dist)
-    return dist
-
-
 def obj_fcn(build_cost, individual: Individual, drones_list: List[Drone]):
     income_sum = 0
 
     for d in drones_list:
-        dist = dist_drone_to_station(d, individual)
-        # print(dist)
+        dist = helper.dist_drone_to_station(d, individual)
         if dist <= individual.range:
             income_sum += d.income
 
@@ -197,22 +147,6 @@ def obj_fcn(build_cost, individual: Individual, drones_list: List[Drone]):
         return 0
     else:
         return obj_fcn_val
-
-
-def print_pop(pop, msg=""):
-    print("\nPrinting POP ", msg)
-    for i in pop:
-        print(i)
-
-    print("\n")
-
-
-def print_drones(drones):
-    print("\nPrinting drones:")
-    for d in drones:
-        print(d)
-
-    print("\n")
 
 
 def fitness(pop: List[Individual], build_costs, drones_list):
@@ -239,7 +173,7 @@ def selection(pop: List[Individual]):
 
     new_pop = []
     while len(new_pop) < len(pop):
-        r = random.random()
+        r = random()
         prob = 0
         for i in pop:
             prob += i.prob
@@ -261,7 +195,7 @@ def cross_pop(pop: List[Individual], graph_size, cross_factor) -> List[Individua
         crossed_pop.append(children[1])
         i += 2
     while len(crossed_pop) < len(pop):
-        r = random.random()
+        r = random()
         prob = 0
         for e in pop:
             prob += e.prob
@@ -292,7 +226,7 @@ def mutation(pop: List[Individual], mutation_factor: float, graph_size) -> List[
         # print("losowa stacja:", e, "---", pop[e])
         string = helper.convert_chromosome_to_bin(pop[e], len(bin(graph_size)[2:]))
         # print("stary:", string, "\n")
-        r = randint(0, len(string)-1)
+        r = randint(0, len(string) - 1)
         for i in string:
             array_string.append(int(i))
         if array_string[r] == 1:
@@ -312,9 +246,9 @@ def mutation(pop: List[Individual], mutation_factor: float, graph_size) -> List[
         x = int(string_x, 2)
         y = int(string_y, 2)
         if x > 256:
-            x = int(int(string_x, 2)/2)
+            x = int(int(string_x, 2) / 2)
         if y > 256:
-            y = int(int(string_y, 2)/2)
+            y = int(int(string_y, 2) / 2)
         pop[e].chromosome = [x, y]
         # pop[e].chromosome = [int(string_x, 2), int(string_y, 2)]
         # print("chromosom:", pop[e].chromosome)
