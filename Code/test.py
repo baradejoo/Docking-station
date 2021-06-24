@@ -19,7 +19,7 @@ def test(graph_size, pop_size, iteration_to_averaged, gen_iteration, gen_drones_
     i = 0
     while i < iteration_to_averaged:
         station_costs = ga.full_algorithm(graph_size, pop_size, gen_iteration, max_drones_in_station,
-                                          drones_params, build_costs)
+                                          drones_params, build_costs, i)
         sum_costs = np.sum(station_costs)
         all_iter_average_cost[0, i] = sum_costs
         all_iter_average_num[0, i] = len(station_costs)

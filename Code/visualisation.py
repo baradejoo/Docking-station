@@ -16,7 +16,7 @@ def print_pop(pop, msg=""):
     print("\n")
 
 
-def visualisation(stations: List[Individual], drones_list: List[Drone], stations_radius: int, graph_size):
+def visualisation(stations: List[Individual], drones_list: List[Drone], stations_radius: int, graph_size, iteration_to_averaged: int):
     filename = "../drone.png"
     drone_img = Image.open(filename, 'r')
     fixed_height = 50
@@ -45,6 +45,9 @@ def visualisation(stations: List[Individual], drones_list: List[Drone], stations
         ab = AnnotationBbox(drone_box, (drones_x[idx], drones_y[idx]), frameon=False)
         ax.add_artist(ab)
     ax.plot(stations_center_x, stations_center_y, 'b.', markersize=40)
+    ax.set_title("Iteracja nr {}".format(iteration_to_averaged+1), fontsize=50)
+    ax.set_xlabel('współrzędna x', fontsize=30)
+    ax.set_ylabel('współrzędna y', fontsize=30)
     # ax.plot(drones_x, drones_y, 'o')
     fig.set_size_inches(20, 20)
     fig.show()

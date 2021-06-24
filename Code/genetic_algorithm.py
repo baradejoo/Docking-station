@@ -50,7 +50,7 @@ class Exception1(Exception):
         super().__init__(self.message)
 
 
-def full_algorithm(graph_size, pop_size, gen_iteration, max_drones_in_station, drones_params, build_costs):
+def full_algorithm(graph_size, pop_size, gen_iteration, max_drones_in_station, drones_params, build_costs, iteration_to_averaged):
     drones_list = []  # Containing list of drones objects
 
     # Creating drones objects
@@ -71,7 +71,7 @@ def full_algorithm(graph_size, pop_size, gen_iteration, max_drones_in_station, d
     for idx, params in enumerate(drones_params):
         drones_list.append(Drone(idx, params))
 
-    vs.visualisation(best_stations, drones_list, STATION_RANGE, graph_size)
+    vs.visualisation(best_stations, drones_list, STATION_RANGE, graph_size, iteration_to_averaged)
 
     station_costs = np.array([])
     for station in best_stations:
