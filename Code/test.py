@@ -45,9 +45,9 @@ def test(graph_size, pop_size, iteration_to_averaged, gen_iteration, gen_drones_
     std_all_iter_average_num = np.std(all_iter_average_num, axis=1)
 
     print("\n--------------------------------- Final summary --------------------------------".format(i))
-    print("Mean of all iteration for each station: \n", mean_all_station_costs)
-    print("Standard deviation of all iteration for each station: \n", std_all_station_costs)
-    print("Variance of all iteration for each station: \n", var_all_station_costs)
+    # print("Mean of all iteration for each station: \n", mean_all_station_costs)
+    # print("Standard deviation of all iteration for each station: \n", std_all_station_costs)
+    # print("Variance of all iteration for each station: \n", var_all_station_costs)
     print("Mean of all iteration's costs: ", mean_all_iter_average_costs)
     print("Mean of all iteration's number of stations: ", mean_all_iter_average_num)
     print("Standard deviation of all iteration's costs: ", std_all_iter_average_costs)

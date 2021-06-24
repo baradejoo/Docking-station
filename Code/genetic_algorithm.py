@@ -5,7 +5,7 @@ import numpy as np
 from typing import List, Tuple
 from random import randint, random
 
-STATION_RANGE = 25
+STATION_RANGE = 35
 
 
 class Individual:
@@ -62,7 +62,7 @@ def full_algorithm(graph_size, pop_size, gen_iteration, max_drones_in_station, d
     while len(drones_list) > 2:
         best_station = genetic_alg(drones_list, build_costs, pop_size, gen_iteration, graph_size)
         best_stations.append(best_station)
-        vs.print_pop(best_stations)
+        #vs.print_pop(best_stations)
         drones_list = helper.delete_drones_covered_by_ind(best_station, drones_list, max_drones_in_station)
 
     drones_list = []  # Containing list of drones objects
@@ -148,6 +148,7 @@ def fitness(pop: List[Individual], build_costs, drones_list):
         if obj_fcn_sum != 0:
             ind.prob = ind.obj_fcn / obj_fcn_sum
         else:
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             ind.prob = 1 / len(pop)
 
     return pop

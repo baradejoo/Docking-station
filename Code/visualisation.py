@@ -1,5 +1,3 @@
-from Code.genetic_algorithm import Individual, Drone
-
 import os
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -16,7 +14,8 @@ def print_pop(pop, msg=""):
     print("\n")
 
 
-def visualisation(stations: List[Individual], drones_list: List[Drone], stations_radius: int, graph_size, iteration_to_averaged: int):
+
+def visualisation(stations: List, drones_list: List, stations_radius: int, graph_size, iteration_to_averaged: int):
     filename = "../drone.png"
     drone_img = Image.open(filename, 'r')
     fixed_height = 50
