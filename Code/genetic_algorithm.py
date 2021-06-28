@@ -59,7 +59,7 @@ def full_algorithm(graph_size, pop_size, gen_iteration, max_drones_in_station, d
 
     best_stations = []
 
-    while len(drones_list) > 2:
+    while len(drones_list) > 4:
         best_station = genetic_alg(drones_list, build_costs, pop_size, gen_iteration, graph_size)
         best_stations.append(best_station)
         #vs.print_pop(best_stations)

@@ -44,7 +44,7 @@ def visualisation(stations: List, drones_list: List, stations_radius: int, graph
         ab = AnnotationBbox(drone_box, (drones_x[idx], drones_y[idx]), frameon=False)
         ax.add_artist(ab)
     ax.plot(stations_center_x, stations_center_y, 'b.', markersize=40)
-    ax.set_title("Iteracja nr {}".format(iteration_to_averaged+1), fontsize=50)
+    ax.set_title("Iteracja nr {}".format(iteration_to_averaged), fontsize=50)
     ax.set_xlabel('współrzędna x', fontsize=30)
     ax.set_ylabel('współrzędna y', fontsize=30)
     # ax.plot(drones_x, drones_y, 'o')
